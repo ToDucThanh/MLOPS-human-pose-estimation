@@ -11,7 +11,7 @@ pipeline {
     }
 
     stages{
-        stage('Install'){
+        stage('Check code quality'){
             agent{
                 docker{
                     image 'python:3.9.2-slim-buster'
@@ -20,11 +20,6 @@ pipeline {
             steps{
                 echo 'Installing libraries...'
                 sh 'pip install isort ruff'
-            }
-        }
-
-        stage('Check code quality'){
-            steps{
                 echo 'Check sorting using isort'
                 sh 'isort --atomic .'
                 echo 'Check format and linting using ruff'
