@@ -1,3 +1,6 @@
 [core]
     analytics = false
     autostage = true
+    remote = gcs-storage
+['remote "gcs-storage"']
+    url = gs://human-pose-data-bucket/data
