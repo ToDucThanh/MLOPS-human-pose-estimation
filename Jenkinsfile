@@ -19,7 +19,17 @@ pipeline {
             }
             steps{
                 echo 'Installing libraries...'
-                sh 'pip install loguru'
+                sh 'pip install isort ruff'
+            }
+        }
+
+        stage('Check code quality'){
+            steps{
+                echo 'Check sorting using isort'
+                sh 'isort --atomic .'
+                echo 'Check format and linting using ruff'
+                sh 'ruff format .'
+                sh 'ruff check --fix .'
             }
         }
     }
