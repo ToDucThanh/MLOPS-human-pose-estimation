@@ -1,0 +1,8 @@
+# PostgreSQL Database Configuration
+POSTGRES_DATABASE=backend-store
+POSTGRES_USER=backend-store
+POSTGRES_PASSWORD=backend-store
+POSTGRES_PORT=5432
+
+# MLflow Backend Store Configuration
+# MLFLOW_BACKEND_STORE=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@mlflow-backend-store/${POSTGRES_DATABASE}
