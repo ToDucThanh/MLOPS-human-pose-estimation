@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "human-pose-estimation-development"
+version = "0.1.0"
+description = "Development stage of human pose estimation system"
+authors = ["To Duc Thanh"]
+license = "MIT"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.9.7"
+pyyaml = "^6.0.1"
+torch = "^2.2.2"
+torchvision = "^0.17.2"
+opencv-python = "^4.9.0.80"
+tqdm = "^4.66.2"
+loguru = "^0.7.2"
+matplotlib = "^3.8.4"
+python-dotenv = "^1.0.1"
+mlflow = "^2.11.3"
+pynvml = "^11.5.0"
+dvc = {extras = ["gdrive", "gs"], version = "^3.48.4"}
+scipy = "^1.13.0"
+minio = "^7.2.5"
+
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+pytest = "^8.1.1"
+pre-commit = "^3.7.0"
+jupyterlab = "^4.1.5"
+ruff = "^0.3.5"
+
+
+[tool.poetry.group.deploy.dependencies]
+torch = "^2.2.2"
+torchvision = "^0.17.2"
+opencv-python = "^4.9.0.80"
+scipy = "^1.13.0"
+loguru = "^0.7.2"
+matplotlib = "^3.8.4"
+fastapi = "^0.110.1"
+uvicorn = {extras = ["standard"], version = "^0.29.0"}
+python-multipart = "^0.0.9"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
