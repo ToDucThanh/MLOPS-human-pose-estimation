@@ -1,0 +1,16 @@
+apiVersion: v1
+name: human-pose-estimation-system
+description: Helm chart for my human pose estimation
+
+type: application
+
+# The chart vesion, which should be changed every time
+# you make an update to the chart
+version: 0.0.1
+
+# The version number of the application being deployed
+appVersion: latest
+
+maintainers:
+- email: tothanh155@gmail.com
+  name: ToDucThanh

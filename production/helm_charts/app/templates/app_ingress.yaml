@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-nginx-ingress
+  namespace: model-serving
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-body-size: 16m
+spec:
+  rules:
+    - host: human-pose-estimation.com
+      http:
+        paths:
+        - path: /docs
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Release.Name }}
+              port:
+                number: 30000
+
+        - path: /openapi.json
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Release.Name }}
+              port:
+                number: 30000
+
+        - path: /healthcheck
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Release.Name }}
+              port:
+                number: 30000
+
+        - path: /predict_human_pose
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Release.Name }}
+              port:
+                number: 30000

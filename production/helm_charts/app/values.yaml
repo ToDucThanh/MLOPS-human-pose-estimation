@@ -1,0 +1,4 @@
+image:
+  repository: jupi15docker/pose-estimation
+  tag: latest
+  pullPolicy: Always
