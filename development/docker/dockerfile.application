@@ -1,0 +1,40 @@
+FROM python:3.9.2-slim-buster AS base
+
+ARG USER_NAME
+
+USER root
+
+ENV HOME=/home/${USER_NAME}
+
+ENV \
+  TZ=Asia/Ho_Chi_Minh \
+  PYTHONUNBUFFERED=1 \
+  DEBIAN_FRONTEND=noninteractive \
+  PYTHONDONTWRITEBYTECODE=1 \
+  PIP_NO_CACHE_DIR=off \
+  PIP_DISABLE_PIP_VERSION_CHECK=on \
+  PIP_DEFAULT_TIMEOUT=100 \
+  POETRY_VERSION="1.8.1"
+
+RUN apt-get -qq update \
+    && apt-get -qq -y install --no-install-recommends build-essential libb64-dev ffmpeg libsm6 libxext6 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get -qq -y clean
+
+RUN mkdir -p /app
+
+COPY pyproject.toml *.lock /app/
+
+WORKDIR /app
+
+RUN pip install --upgrade pip setuptools \
+    && pip install poetry==${POETRY_VERSION} \
+    && poetry config virtualenvs.create false \
+    && poetry install --only deploy \
+    && rm -rf ${HOME}/.cache/*
+
+COPY . /app/
+
+EXPOSE 30000
+
+CMD ["uvicorn", "app.application:app", "--host", "0.0.0.0", "--port", "30000"]

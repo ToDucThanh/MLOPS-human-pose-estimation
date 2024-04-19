@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  pose-estimation:
+    image: jupi15docker/pose-estimation:latest
+    platform: linux/amd64
+    container_name: pose-estimation-container
+    build:
+      context: .
+      dockerfile: ./docker/dockerfile.application
+      args:
+        USER_NAME: "${USER_NAME:-toducthanh}"
+    ports:
+      - 8000:30000
+    volumes:
+      - ./:/app/
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    ipc: host
+    init: true
