@@ -1,0 +1,23 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+        -   id: trailing-whitespace
+            args: ["--markdown-linebreak-ext=md"]
+        -   id: end-of-file-fixer
+        -   id: check-yaml
+            args: ["--unsafe"]
+        -   id: check-added-large-files
+            args: ["--maxkb=10000"] # 10MB
+-   repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+        -   id: isort
+            name: isort (python)
+            args: [--settings=development/.isort.cfg]
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.6
+    hooks:
+        -   id: ruff
+            args: [ --fix, --config=development/ruff.toml]
+        -   id: ruff-format
