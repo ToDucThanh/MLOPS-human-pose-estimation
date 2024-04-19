@@ -1,0 +1,33 @@
+# -------------- Data -------------
+data_root_path: ./data/raw
+train_mask_data_path: ./data/raw/mask/train2014/mask_COCO_train2014_
+val_mask_data_path: ./data/raw/mask/val2014/mask_COCO_val2014_
+label_file: label.json
+label_subset_file: label_subset.json
+
+# -------------- Model -------------
+model_weight_path: ./src/weights/pose_model_scratch.pth
+info_summary_file_path: ./src/weights/info.json
+
+# -------------- Logging ----------
+logging_file: ./logs/logging_file.log
+
+# ------------- Hyperparamters ------------
+hyperparameters:
+  train_batch_size: 8
+  val_batch_size: 8
+  lr: 0.001
+  betas: [0.9, 0.999]
+  weight_decay: 0.0001
+  epochs: 20
+
+# -------------- DVC remote ---------------
+dvc_remote_name: gcs-storage
+dvc_remote_url: gs://human-pose-data-bucket/data
+
+
+# -------------- MLflow --------------
+experiment_name: openpose-human-pose-training
+
+# -------------- Docker --------------
+image_name: jupi15docker/pose-estimation:latest
