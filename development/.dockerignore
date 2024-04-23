@@ -1,0 +1,9 @@
+*
+!src/app/*
+!logs/__init__.py
+!config/config.yaml
+!config/load_cfg.py
+!poetry.lock
+!pyproject.toml
+!src/inference/*
+!src/weights/pose_model_scratch.pth
