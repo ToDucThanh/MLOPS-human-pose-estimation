@@ -14,5 +14,4 @@ services:
       - 8000:30000
     volumes:
       - ./:/app/
-    ipc: host
     init: true

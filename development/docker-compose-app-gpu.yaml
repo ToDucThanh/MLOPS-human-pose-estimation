@@ -21,5 +21,4 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    ipc: host
     init: true
