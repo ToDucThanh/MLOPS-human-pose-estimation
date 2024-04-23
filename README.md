@@ -63,14 +63,20 @@ In the production phase, the focus shifts to model deployment, resources monitor
       - [6.3. Deploy the FastAPI app to a Docker container](#63-deploy-the-fastapi-app-to-a-docker-container)
     - [7. Pipeline](#7-pipeline)
     - [8. Continuous Intergration (CI) with Jenkins (Optional)](#8-continuous-intergration-ci-with-jenkins-optional)
-      - [8.1. Install Ngrok](#81-install-ngrok)
-      - [8.2. Set up Jenkins](#82-set-up-jenkins)
-        - [8.2.1. Run Jenkins Docker container](#821-run-jenkins-docker-container)
-        - [8.2.2. Install Docker Plugins in Jenkins](#822-install-docker-plugins-in-jenkins)
-        - [8.2.3. Make locally hosted Jenkins accessible from outside your network using Ngrok](#823-make-locally-hosted-jenkins-accessible-from-outside-your-network-using-ngrok)
-        - [8.2.4. Add Jenkins to Github Webhooks](#824-add-jenkins-to-github-webhooks)
-        - [8.2.5. Generate personal access tokens (classic)](#825-generate-personal-access-tokens-classic)
-        - [8.2.6. Configure](#826-configure)
+      - [8A: Localhost](#8a-localhost)
+        - [8.1. Install Ngrok](#81-install-ngrok)
+        - [8.2. Set up Jenkins](#82-set-up-jenkins)
+          - [8.2.1. Run Jenkins Docker container](#821-run-jenkins-docker-container)
+          - [8.2.2. Install Docker Plugins in Jenkins](#822-install-docker-plugins-in-jenkins)
+          - [8.2.3. Make locally hosted Jenkins accessible from outside your network using Ngrok](#823-make-locally-hosted-jenkins-accessible-from-outside-your-network-using-ngrok)
+          - [8.2.4. Add Jenkins to Github Webhooks](#824-add-jenkins-to-github-webhooks)
+          - [8.2.5. Generate personal access tokens (classic)](#825-generate-personal-access-tokens-classic)
+          - [8.2.6. Configure](#826-configure)
+      - [8B: AWS EC2](#8b-aws-ec2)
+        - [8.3. Install aws-cli](#83-install-aws-cli)
+        - [8.4. Create key pair](#84-create-key-pair)
+        - [8.5. Set up terraform](#85-set-up-terraform)
+        - [8.6. Set up Jenkins](#86-set-up-jenkins)
   - [Production stage](#production-stage)
     - [9. Set up](#9-set-up)
       - [9.1. Set up GCP](#91-set-up-gcp)
@@ -88,7 +94,7 @@ In the production phase, the focus shifts to model deployment, resources monitor
     - [10. Deploy to GKE](#10-deploy-to-gke)
       - [10.1. Deploy Nginx Service Controller](#101-deploy-nginx-service-controller)
       - [10.2. Deploy application service](#102-deploy-application-service)
-      - [10.3. Deploy minitoring service](#103-deploy-minitoring-service)
+      - [10.3. Deploy monitoring service](#103-deploy-monitoring-service)
 
 ## Development stage
 
@@ -537,15 +543,17 @@ make pipeline
 
 ### 8. Continuous Intergration (CI) with Jenkins (Optional)
 
-#### 8.1. Install Ngrok
+#### 8A: Localhost
+
+##### 8.1. Install Ngrok
 
 - Follow the link to install Ngrok: [install ngrok](https://ngrok.com/download)
 - Sign up for the account: [https://dashboard.ngrok.com/signup](https://dashboard.ngrok.com/signup)
 - Follow the instructions to add your authtoken.
 
-#### 8.2. Set up Jenkins
+##### 8.2. Set up Jenkins
 
-##### 8.2.1. Run Jenkins Docker container
+###### 8.2.1. Run Jenkins Docker container
 
 Run the following command to spin up Jenkins:
 
@@ -566,7 +574,7 @@ Next steps:
 - Create an admin user: After plugin installation, create an admin user for Jenkins.
 - Once the setup is complete, you can start using Jenkins.
 
-##### 8.2.2. Install Docker Plugins in Jenkins
+###### 8.2.2. Install Docker Plugins in Jenkins
 
 We will use Docker to run CI in Jenkins. Follow the steps below to install these plugins.
 
@@ -580,7 +588,7 @@ We will use Docker to run CI in Jenkins. Follow the steps below to install these
 
 ![Install plugins](static/images/install_plugins.png)
 
-##### 8.2.3. Make locally hosted Jenkins accessible from outside your network using Ngrok
+###### 8.2.3. Make locally hosted Jenkins accessible from outside your network using Ngrok
 
 Run the following command:
 
@@ -588,7 +596,7 @@ Run the following command:
 ngrok http http://localhost:8081
 ```
 
-##### 8.2.4. Add Jenkins to Github Webhooks
+###### 8.2.4. Add Jenkins to Github Webhooks
 
 Once you've made your Jenkins instance accessible via Ngrok, you can configure GitHub webhooks to trigger Jenkins builds automatically whenever there are new commits or pull requests pushed to your repository.
 
@@ -598,11 +606,11 @@ Once you've made your Jenkins instance accessible via Ngrok, you can configure G
 
 ![Webhook](static/images/webhooks.png)
 
-##### 8.2.5. Generate personal access tokens (classic)
+###### 8.2.5. Generate personal access tokens (classic)
 
 ![Personal Access Token](static/images/personal-access-tokens.png)
 
-##### 8.2.6. Configure
+###### 8.2.6. Configure
 
 - Create the Multibranch Pipeline
 
@@ -623,6 +631,65 @@ Once you've made your Jenkins instance accessible via Ngrok, you can configure G
     ![API usage rate](static/images/api-usage-rate.png)
 
 After completing the setup, every time you push or create a pull request, Jenkins will trigger and check your code quality (based on the rules in the [Jenkinsfile](Jenkinsfile)). If all checks pass, your push or pull request will proceed.
+
+#### 8B: AWS EC2
+
+##### 8.3. Install aws-cli
+
+Follow below steps to install aws-cli:
+
+```bash
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+```
+
+##### 8.4. Create key pair
+
+```bash
+aws ec2 create-key-pair -key-name terraform-key --key-type rsa --key-format --query "KeyMaterial" --output text > jupiter-ec2.pem
+```
+
+##### 8.5. Set up terraform
+
+Follow steps in [Install terraform](#92-install-terraform), then do the following commands:
+
+```bash
+cd terraform_dev
+terraform init
+terraform plan
+terraform apply
+```
+
+Wait until the EC2 is set up.
+
+![jenkins-ec2](static/images/jenkins-ec2.png)
+
+##### 8.6. Set up Jenkins
+
+Ssh to ec2 instance above and run the following commands to install Jenkins:
+
+```bash
+sudo apt update
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable"
+sudo apt update
+sudo apt-get install docker-ce
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo groupadd docker
+sudo usermod -aG docker ubuntu
+
+docker run -u root -d --name jenkins-contaner -p 8080:8080 -v jenkins-data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock -v "$HOME":/home jupi15docker/jenkins
+```
+
+Then, follow steps in [Set up Jenkins](#82-set-up-jenkins) in part A
+
+Results:
+
+![Jenkins-build-ec2](static/images/jenkins-build.png)
 
 ## Production stage
 
@@ -794,7 +861,7 @@ Now, we will test the app, do the following steps:
 
     ![fastapi-gke](static/images/fastapi-gke.png)
 
-#### 10.3. Deploy minitoring service
+#### 10.3. Deploy monitoring service
 
 We use `kube-prometheus-stack` to deploy a monitoring solution for the Kubernetes cluster. This stack, provided by the Prometheus community, includes various components such as Prometheus, Grafana, Alertmanager, and other Prometheus ecosystem tools configured to monitor the health and performance of your cluster's resources.
 
